@@ -1,5 +1,5 @@
 # Utiliser une image Python
-FROM python:3.10-slim
+FROM python:3.11.4-alpine3.18
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -9,10 +9,11 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 # Copier le code source
-COPY . .
+COPY ./app.py /app/
 
 # Exposer le port
-EXPOSE 5000
+EXPOSE 8080
 
 # Commande pour lancer Flask
-CMD ["python", "run.py"]
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]

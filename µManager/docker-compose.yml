@@ -2,17 +2,17 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3001:3001"
+      - "8080:8080"
     volumes:
       - ./backend:/app
     environment:
       FLASK_ENV: development
 
   db:
-    image: mariadb:latest  # Utilise l'image MariaDB
+    image: mariadb:latest  
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root  # Remplace par un mot de passe sécurisé
+      MYSQL_ROOT_PASSWORD: root  
       MYSQL_DATABASE: micromanager
     ports:
       - "3307:3306"
@@ -23,10 +23,10 @@ services:
     image: phpmyadmin:latest
     restart: always
     ports:
-      - "8080:80"  # Accès à phpMyAdmin via http://localhost:8080
+      - "8081:80" 
     environment:
-      PMA_HOST: db  # Référence au service "db"
-      MYSQL_ROOT_PASSWORD: root  # Doit correspondre à celui défini pour MariaDB
+      PMA_HOST: db  
+      MYSQL_ROOT_PASSWORD: root  
 
 volumes:
-  db_data:  # Volume pour stocker les données de la base
+  db_data:  

@@ -2,21 +2,26 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 function App() {
-  const [message, setMessage] = useState('');
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/hello')
+    axios.get('http://127.0.0.1:8080/api/users_test')  // Adresse du backend dans Docker
       .then(response => {
-        setMessage(response.data.message);
+        setUsers(response.data.users); // On suppose que l'API renvoie { "users": [...] }
       })
       .catch(error => {
-        console.error("Erreur lors de la récupération du message !", error);
+        console.error("Erreur lors de la récupération des utilisateurs !", error);
       });
   }, []);
 
   return (
     <div>
-      <h1>{message}</h1>
+      <h1>Liste des utilisateurs :</h1>
+      <ul>
+        {users.map((user, index) => (
+          <li key={index}>{user}</li>
+        ))}
+      </ul>
     </div>
   );
 }
