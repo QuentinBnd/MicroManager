@@ -1,10 +1,9 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask import Blueprint, jsonify, request
 import mysql.connector
 
-app = Flask(__name__)
-cors = CORS(app)
+users_api = Blueprint('users_api', __name__)
 
+# Configuration de la base de données
 db_config = {
     'host': 'db',
     'user': 'root',
@@ -12,10 +11,28 @@ db_config = {
     'database': 'micromanager'
 }
 
-@app.route('/api/users', methods=['POST'])
+# Route pour récupérer tous les utilisateurs (GET)
+@users_api.route('/api/users', methods=['GET'])
+def get_all_users():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor(dictionary=True)
+
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+
+        cursor.close()
+        connection.close()
+
+        return jsonify(users), 200
+    except mysql.connector.Error as err:
+        return jsonify({"error": str(err)}), 500
+
+# Route pour créer un nouvel utilisateur (POST)
+@users_api.route('/api/users', methods=['POST'])
 def create_user():
-    data = request.json  # Récupère les données envoyées depuis le frontend
-    print("Données reçues :", data)  # Log pour déboguer
+    data = request.json
+    print("Données reçues :", data)
 
     if not data:
         return jsonify({'error': 'Aucune donnée reçue.'}), 400
@@ -48,37 +65,3 @@ def create_user():
         if connection.is_connected():
             cursor.close()
             connection.close()
-
-
-@app.route('/', methods=['GET'])
-def home():
-    return "Hello World !"
-
-@app.route('/api/users_test', methods=['GET'])
-def get_users():
-    return jsonify({'users': ['Quentin', 'Sébiche','Axel']})
-
-@app.route('/api/userss', methods=['GET'])
-def get_all_users():
-    try:
-        # Connexion à la base de données
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor(dictionary=True)
-        
-        # Requête SQL pour récupérer tous les utilisateurs
-        cursor.execute("SELECT * FROM users")
-        users = cursor.fetchall()
-        
-        # Fermer la connexion
-        cursor.close()
-        connection.close()
-        
-        return jsonify(users), 200
-    except mysql.connector.Error as err:
-        return jsonify({"error": str(err)}), 500
-
-
-
-if __name__ == '__main__':
-    app.run(debug=True, port=8080)
-    
