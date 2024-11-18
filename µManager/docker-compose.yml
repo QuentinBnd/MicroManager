@@ -17,7 +17,8 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql  # Volume persistant pour conserver les données
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/schema.sql  # Script d'initialisation
 
   phpmyadmin:
     image: phpmyadmin:latest
