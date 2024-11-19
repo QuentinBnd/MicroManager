@@ -22,10 +22,20 @@ function App() {
 
     axios.post('http://127.0.0.1:8080/api/users', formData)
       .then(response => {
-        setMessage(response.data.message);
+        // Vérifiez que la réponse contient bien le message de succès
+        if (response.status === 201 && response.data.message) {
+          setMessage(`Succès : ${response.data.message}`);
+        } else {
+          setMessage('Utilisateur créé, mais aucun message de confirmation reçu.');
+        }
       })
       .catch(error => {
-        setMessage('Erreur lors de la création de l’utilisateur.');
+        // Gestion des erreurs pour afficher des messages informatifs
+        if (error.response && error.response.data && error.response.data.error) {
+          setMessage(`Erreur : ${error.response.data.error}`);
+        } else {
+          setMessage('Erreur lors de la création de l’utilisateur.');
+        }
         console.error(error);
       });
   };

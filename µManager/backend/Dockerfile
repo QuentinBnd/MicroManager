@@ -8,14 +8,25 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-# Copier le code source
-COPY ./backend.py /app/
+# Copier le script Python principal
+COPY ./run.py /app/
+
+# Copier le script entrypoint
+COPY entrypoint.sh /app/entrypoint.sh
+
+# Donner les permissions d'exécution au script entrypoint
+RUN chmod +x /app/entrypoint.sh
 
 # Définir FLASK_APP
-ENV FLASK_APP=backend.py
+ENV FLASK_APP=run.py
 
 # Exposer le port
 EXPOSE 8080
+
+RUN chmod +x /app/entrypoint.sh
+
+# Définir l'entrée par défaut
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Commande pour lancer Flask
 CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
